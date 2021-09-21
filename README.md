@@ -10,7 +10,7 @@
 # 📦 Install
 ```bash
 git clone https://github.sydney.edu.au/ELEC5619-Group-26/ELEC5619-2021S2-G26.git
-cd 5619Project
+cd ELEC5619-2021S2-G26-master
 ```
 ### Project setup(Front-end)
 
