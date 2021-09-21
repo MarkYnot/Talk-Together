@@ -31,6 +31,7 @@ npm run dev
 > 1. Create database "test" 
 > 2. Create table "book"
 > 3. Add following data:
+  
   ![dbStrucuture](https://github.sydney.edu.au/ELEC5619-Group-26/ELEC5619-2021S2-G26/blob/master/README%20image/database-structure.png)
 
 ### Test database
@@ -38,6 +39,7 @@ npm run dev
 1. Open browser and type http://localhost:8080/ , 
 2. select "Book_Table_Test"
 3. Successful:
+   
    ![successful](https://github.sydney.edu.au/ELEC5619-Group-26/ELEC5619-2021S2-G26/blob/master/README%20image/successful.png)
 
    
