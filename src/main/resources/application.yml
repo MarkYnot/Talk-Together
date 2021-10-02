@@ -1,0 +1,31 @@
+server:
+  port: 3001
+
+
+spring:
+  datasource:
+    username: root
+    password: Xiao1998
+    url: jdbc:mysql://localhost:3306/elec5619
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: dd-MM-yyyy ss:mm:HH
+    time-zone: GMT+11
+    serialization:
+      write-dates-as-timestamps: false
+      fail_on_empty_beans: false
+
+
+  jpa:
+    database: mysql
+    show-sql: true
+    open-in-view: true
+    properties:
+      hibernate:
+        naming:
+          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        enable_lazy_load_no_trans: true
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        ddl-auto: update
+        format_sql: true
+
