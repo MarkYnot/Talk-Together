@@ -29,6 +29,7 @@ public class UserHandler {
 
 
         HashMap<String, Object> userMap = new HashMap<>();
+//        userMap.put("id", user.getUser_id());
         userMap.put("email", user.getEmail());
         userMap.put("password", user.getPassword());
         userMap.put("firstname", user.getFirstname());
