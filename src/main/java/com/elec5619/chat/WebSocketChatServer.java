@@ -1,61 +1,107 @@
 package com.elec5619.chat;
 
 import com.alibaba.fastjson.JSON;
+import com.elec5619.Entity.GroupChat;
+import com.elec5619.Entity.Message;
+import com.elec5619.Entity.Tag;
+import com.elec5619.Entity.User;
+import com.elec5619.Repository.GroupChatRepository;
+import com.elec5619.Repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import javax.websocket.*;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * WebSocket 聊天服务端
- *
- * @see ServerEndpoint WebSocket服务端 需指定端点的访问路径
- * @see Session   WebSocket会话对象 通过它给客户端发送消息
+ * This is a WebSocket server
+ * SeverEndpoint is the url you can access the server
  */
 
 @Component
-@ServerEndpoint("/chat")
+@ServerEndpoint(value = "/chat/{roomName}/{userName}")
 public class WebSocketChatServer {
 
-    /**
-     * 全部在线会话  PS: 基于场景考虑 这里使用线程安全的Map存储会话对象。
-     */
-    private static Map<String, Session> onlineSessions = new ConcurrentHashMap<>();
+    private static GroupChatRepository groupChatRepository;
+    private static UserRepository userRepository;
 
+    @Autowired
+    public void setGroupChat(GroupChatRepository groupChatRepository)
+    {
+        WebSocketChatServer.groupChatRepository=groupChatRepository;
+    }
+
+    @Autowired
+    public void setUser(UserRepository userRepository)
+    {
+        WebSocketChatServer.userRepository=userRepository;
+    }
+
+    //store rooms (key=room name, value=users in the room)
+    private static final Map<String, Set<Session>> rooms=new ConcurrentHashMap<>();
+    //store users in this session
+    private static final Map<String,String> users=new ConcurrentHashMap<>();
 
     /**
-     * 当客户端打开连接：1.添加会话对象 2.更新在线人数
+     *
+     * @param roomName
+     * @param userName
+     * @param session
+     * When users open server, 1. put user into a room 2. broadcast a message
      */
     @OnOpen
-    public void onOpen(Session session) {
-        onlineSessions.put(session.getId(), session);
-        sendMessageToAll(Message.jsonStr(Message.ENTER, "", "", onlineSessions.size()));
+    public void onOpen(@PathParam("roomName") String roomName,@PathParam("userName") String userName, Session session){
+        System.out.println(UserCheck(roomName,userName));
+
+        if(!rooms.containsKey(roomName)){
+            Set<Session> room=new HashSet<>();
+            room.add(session);
+            rooms.put(roomName,room);
+        }
+        else{
+            rooms.get(roomName).add(session);
+        }
+        users.put(session.getId(),userName);
     }
 
     /**
-     * 当客户端发送消息：1.获取它的用户名和消息 2.发送消息给所有人
-     * <p>
-     * PS: 这里约定传递的消息为JSON字符串 方便传递更多参数！
+     *
+     * @param roomName
+     * @param
+     * @param jsonStr
+     * When user send a message, broadcast message in his room
      */
     @OnMessage
-    public void onMessage(Session session, String jsonStr) {
+    public void onMessage(@PathParam("roomName") String roomName, @PathParam("userName") String userName, String jsonStr) {
         Message message = JSON.parseObject(jsonStr, Message.class);
-        sendMessageToAll(Message.jsonStr(Message.SPEAK, message.getUsername(), message.getMsg(), onlineSessions.size()));
+        broadcast(roomName,Message.jsonStr(Message.SPEAK, userName, message.getMsg(), users.size()));
     }
 
     /**
-     * 当关闭连接：1.移除会话对象 2.更新在线人数
+     *
+     * @param roomName
+     * @param session
+     * When close the server, remove user from the room and broadcast a message
      */
     @OnClose
-    public void onClose(Session session) {
-        onlineSessions.remove(session.getId());
-        sendMessageToAll(Message.jsonStr(Message.QUIT, "", "", onlineSessions.size()));
+    public void onClose(@PathParam("roomName") String roomName, Session session) {
+        rooms.get(roomName).remove(session);
+        users.remove(session.getId());
+        //broadcast(roomName,Message.jsonStr(Message.QUIT, "", "", users.size()));
     }
 
     /**
-     * 当通信发生异常：打印错误日志
+     *
+     * @param session
+     * @param error
+     * When error occurs, print the report
      */
     @OnError
     public void onError(Session session, Throwable error) {
@@ -63,16 +109,46 @@ public class WebSocketChatServer {
     }
 
     /**
-     * 公共方法：发送信息给所有人
+     *
+     * @param roomName
+     * @param userName
+     * @return flag: ture: user can access this room
+     * Check if the user can access this room
      */
-    private static void sendMessageToAll(String msg) {
-        onlineSessions.forEach((id, session) -> {
-            try {
-                session.getBasicRemote().sendText(msg);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public boolean UserCheck(String roomName, String userName){
+        boolean flag=false;
+        User usercheck=WebSocketChatServer.userRepository.getById(1);
+        //System.out.println(usercheck.getUsername());
+        List<Tag> usertags=usercheck.getTagList();
+        GroupChat groupcheck=WebSocketChatServer.groupChatRepository.getById(Integer.parseInt(roomName));
+
+        for(Tag t:usertags){
+            if(t.getTag_id()==groupcheck.getTag_id().getTag_id())
+            {
+                flag=true;
             }
-        });
+        }
+        return flag;
+    }
+
+    /**
+     *
+     * @param roomName
+     * @param msg
+     * broadcast message to all users in this room
+     */
+    private static void broadcast(String roomName, String msg){
+        System.out.println("broadcast");
+        System.out.println(msg);
+        rooms.get(roomName).forEach(session -> {
+                    try {
+                        session.getBasicRemote().sendText(msg);
+                        System.out.println(1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
     }
 
 }

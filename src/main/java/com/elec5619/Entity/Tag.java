@@ -16,6 +16,7 @@ import java.util.List;
 public class Tag {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tag_id;
 
     @Column
@@ -24,4 +25,8 @@ public class Tag {
     @JsonIgnore
     @ManyToMany(mappedBy = "tagList")
     private List<User> userList;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "Tag_id")
+    private GroupChat groupChat;
 }

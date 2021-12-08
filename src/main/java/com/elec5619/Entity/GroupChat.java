@@ -20,9 +20,14 @@ public class GroupChat {
     private Integer room_id;
 
     @Column
-    private Integer tag_id;
+    private String room_name;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "groupChatList")
     private List<User> userList;
+
+    @OneToOne
+    @JoinColumn(name = "Tag_id")
+    @JsonIgnore
+    private Tag Tag_id;
 }

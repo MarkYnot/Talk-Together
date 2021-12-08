@@ -5,7 +5,9 @@ server:
 spring:
   datasource:
     username: root
-    password: Xiao1998
+#    password: Xiao1998
+    password: password
+
     url: jdbc:mysql://localhost:3306/elec5619
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
@@ -14,6 +16,14 @@ spring:
     serialization:
       write-dates-as-timestamps: false
       fail_on_empty_beans: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: word981225@gmail.com
+    password: fvubfxiqygwzrgrj
+    protocol: smtp
+    properties.mail.smtp.starttls.enable: true
+
 
 
   jpa:
@@ -28,4 +38,17 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
         ddl-auto: update
         format_sql: true
+        event:
+          merge:
+            entity_copy_observer: allow
+
+
+Local:
+  address: /storage/fetch/ # 後端 URL 及 網頁訪問路徑地址
+  storagePath: storage # 本地存儲地址
+
+mail:
+  fromMail:
+    addr: word981225@gmail.com
+
 

@@ -1,0 +1,18 @@
+.LogoIcon{
+  margin-top: 2vh;
+  height: 70px;
+  width: 70px;
+  animation: logo-icon-spin infinite 20s linear;
+}
+
+
+@keyframes logo-icon-spin{
+  from{
+      transform: rotate(0deg);
+
+  } to {
+    transform: rotate(360deg);
+
+  }
+
+}

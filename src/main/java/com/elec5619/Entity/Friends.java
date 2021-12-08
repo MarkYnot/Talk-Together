@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Friends {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int friend_id;
 
     @ManyToOne

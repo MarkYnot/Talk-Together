@@ -1,23 +1,23 @@
-package com.elec5619.chat;
+package com.elec5619.Entity;
 
 import com.alibaba.fastjson.JSON;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-/**
- * WebSocket 聊天消息类
- */
+@NoArgsConstructor
+@Builder
 public class Message {
-
     public static final String ENTER = "ENTER";
     public static final String SPEAK = "SPEAK";
     public static final String QUIT = "QUIT";
 
-    private String type;//消息类型
+    private String type;
 
-    private String username; //发送人
+    private String username;
 
-    private String msg; //发送消息
+    private String msg;
 
-    private int onlineCount; //在线用户数
+    private int onlineCount;
 
     public static String jsonStr(String type, String username, String msg, int onlineTotal) {
         return JSON.toJSONString(new Message(type, username, msg, onlineTotal));

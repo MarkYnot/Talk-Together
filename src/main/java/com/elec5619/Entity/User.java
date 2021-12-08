@@ -1,14 +1,9 @@
 package com.elec5619.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,18 +17,21 @@ import java.util.Set;
 @Table(name = "User")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer user_id;
 
     @Column
     private String email;
-    private Integer password;
+    private String password;
     private String firstname;
     private String lastname;
     private String state;
     private String photo;
+    private String gender;
     private String background;
     private String username;
+    private String native_language;
+    private String translate;
 
     @JsonIgnore
     @OneToMany
@@ -69,7 +67,5 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "room_id",referencedColumnName = "room_id")})
     private List<GroupChat> groupChatList;
 
-
-
-
+    public boolean authentication(String email, String password){ return this.email.equals(email) && password == this.password; }
 }
