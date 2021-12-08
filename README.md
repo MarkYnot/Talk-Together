@@ -1,4 +1,4 @@
-# 5619 Together Project
+# Talk Together Project
 
 
 
@@ -16,9 +16,9 @@
 git clone https://github.sydney.edu.au/ELEC5619-Group-26/ELEC5619-2021S2-G26.git
 cd ELEC5619-2021S2-G26-master
 ```
-### Canvas
+### Description
 
-Please visit canvas to download our zip file
+Talk Toghther System is a real-time chat system that allows user to perform random matching chat with a stranger, chat with friends and join existing group rooms to chat with multi-person who has similar interest. 
 
 ## 3.Setup database
 
